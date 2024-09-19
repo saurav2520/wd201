@@ -5,7 +5,7 @@ const minimist = require('minimist');
 
 // Parse command-line arguments
 const args = minimist(process.argv.slice(2));
-const port = args.port || 5000; // Default to 5000 if no port is provided
+const port = args.port; // Default to 5000 if no port is provided
 
 // Create the server
 const server = http.createServer((req, res) => {
@@ -33,7 +33,20 @@ const server = http.createServer((req, res) => {
                 res.end(data);
             }
         });
-    } else {
+     }else if (req.url === '/home') {
+        // Serve the project.html file
+        const filePath = path.join(__dirname, 'home.html'); // Adjust path as needed
+        fs.readFile(filePath, (err, data) => {
+            if (err) {
+                res.writeHead(500, { 'Content-Type': 'text/plain' });
+                res.end('500 - Internal Server Error');
+            } else {
+                res.writeHead(200, { 'Content-Type': 'text/html' });
+                res.end(data);
+            }
+        }); 
+     }
+    else {
         // Serve a 404 for other routes
         res.writeHead(404, { 'Content-Type': 'text/plain' });
         res.end('404 - Not Found');
